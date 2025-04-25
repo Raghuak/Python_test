@@ -1,0 +1,43 @@
+# app.py
+
+from flask import Flask, render_template
+import yfinance as yf
+import pandas_ta as ta
+import pandas as pd
+
+app = Flask(__name__)
+
+# Sample NSE stock list
+stocks = ['RELIANCE.NS', 'TCS.NS', 'INFY.NS', 'HDFCBANK.NS', 'ICICIBANK.NS']
+
+def get_stock_data(ticker):
+    df = yf.download(ticker, period="3mo", interval="1d")
+    df.dropna(inplace=True)
+
+    # Add technical indicators
+    df['RSI'] = ta.rsi(df['Close'], length=14)
+    macd = ta.macd(df['Close'])
+    df['MACD'] = macd['MACD_12_26_9']
+    df['Signal'] = macd['MACDs_12_26_9']
+    df['Volume_Change'] = df['Volume'].pct_change() * 100
+    df['ADX'] = ta.adx(df['High'], df['Low'], df['Close'])['ADX_14']
+    
+    # Latest data row
+    latest = df.iloc[-1]
+    return {
+        'Ticker': ticker,
+        'Close': round(latest['Close'], 2),
+        'RSI': round(latest['RSI'], 2),
+        'MACD': round(latest['MACD'], 2),
+        'Signal': round(latest['Signal'], 2),
+        'Volume_Change': round(latest['Volume_Change'], 2),
+        'ADX': round(latest['ADX'], 2)
+    }
+
+@app.route('/')
+def index():
+    stock_data = [get_stock_data(ticker) for ticker in stocks]
+    return render_template('index.html', stocks=stock_data)
+
+if __name__ == '__main__':
+    app.run(debug=True)

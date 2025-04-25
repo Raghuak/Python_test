@@ -1,0 +1,41 @@
+<!-- templates/index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Momentum Stock Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container py-5">
+        <h1 class="mb-4">Momentum Stocks Dashboard</h1>
+        <table class="table table-bordered table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Ticker</th>
+                    <th>Close Price</th>
+                    <th>RSI</th>
+                    <th>MACD</th>
+                    <th>Signal Line</th>
+                    <th>Volume Change (%)</th>
+                    <th>ADX</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for stock in stocks %}
+                    <tr>
+                        <td>{{ stock.Ticker }}</td>
+                        <td>{{ stock.Close }}</td>
+                        <td>{{ stock.RSI }}</td>
+                        <td>{{ stock.MACD }}</td>
+                        <td>{{ stock.Signal }}</td>
+                        <td>{{ stock.Volume_Change }}</td>
+                        <td>{{ stock.ADX }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
